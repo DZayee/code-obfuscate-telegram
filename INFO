@@ -1,0 +1,87 @@
+Code obfuscation (làm rối mã) là kỹ thuật làm cho mã nguồn trở nên khó đọc và khó hiểu nhằm bảo vệ mã nguồn khỏi việc bị sao chép hoặc khai thác trái phép. Để làm rối mã cho một **Telegram bot** viết bằng Python, bạn có thể sử dụng công cụ `pyarmor` hoặc `pyminifier`, hoặc làm thủ công với một số kỹ thuật.
+
+Dưới đây là hướng dẫn đơn giản:
+
+### 1. Cài đặt `pyarmor` để làm rối mã Python
+
+**Bước 1:** Cài đặt `pyarmor` qua pip:
+
+```bash
+pip install pyarmor
+```
+
+**Bước 2:** Obfuscate file mã nguồn Telegram bot (giả sử file bot là `bot.py`):
+
+```bash
+pyarmor pack -x "python bot.py" -e " --onefile"
+```
+
+Lệnh trên sẽ làm rối mã và đóng gói mã của bạn vào một file thực thi, giúp hạn chế người khác đọc được mã nguồn.
+
+### 2. Thực hiện thủ công các bước làm rối mã
+
+Nếu bạn muốn thực hiện thủ công mà không cần dùng thư viện ngoài, bạn có thể áp dụng các kỹ thuật sau:
+
+#### a. Đổi tên biến, hàm và lớp
+
+Thay đổi các tên biến, tên hàm thành các chuỗi không có ý nghĩa (ví dụ `token` thành `a`, `start_bot` thành `b`). Điều này giúp người khác khó hiểu mã hơn.
+
+```python
+import telebot
+
+a = 'YOUR_BOT_TOKEN'
+b = telebot.TeleBot(a)
+
+@b.message_handler(commands=['start'])
+def c(message):
+    b.send_message(message.chat.id, "Hello! Welcome to the bot.")
+
+b.polling()
+```
+
+#### b. Nén mã thành một dòng (One-liner)
+
+Chuyển toàn bộ mã thành một dòng bằng cách bỏ các dòng trắng và lùi dòng, tuy nhiên cách này sẽ không an toàn như dùng `pyarmor`.
+
+```python
+import telebot;a='YOUR_BOT_TOKEN';b=telebot.TeleBot(a);@b.message_handler(commands=['start'])\ndef c(message):b.send_message(message.chat.id,"Hello! Welcome to the bot.");b.polling()
+```
+
+#### c. Sử dụng `base64` để mã hóa các chuỗi nhạy cảm
+
+Dùng `base64` để mã hóa các chuỗi, như token, trước khi sử dụng:
+
+```python
+import telebot
+import base64
+
+a = base64.b64decode(b'WFlGVEQwWFVMS0ZFNUE=').decode('utf-8')  # mã hóa token
+b = telebot.TeleBot(a)
+
+@b.message_handler(commands=['start'])
+def c(message):
+    b.send_message(message.chat.id, "Hello! Welcome to the bot.")
+
+b.polling()
+```
+
+### 3. Sử dụng `pyminifier` để làm rối mã
+**Cài đặt pyminifier:**
+
+```bash
+pip install pyminifier
+```
+
+**Sử dụng để làm rối mã:**
+
+```bash
+pyminifier --obfuscate-variables bot.py
+```
+
+Lệnh này sẽ thay đổi tên biến và làm cho mã của bạn trở nên khó hiểu hơn.
+
+---
+
+### Lưu ý
+
+Làm rối mã chỉ là một bước bảo mật cơ bản và không đảm bảo an toàn tuyệt đối, nhưng nó sẽ khiến mã của bạn khó đọc hơn đối với người dùng không mong muốn.
